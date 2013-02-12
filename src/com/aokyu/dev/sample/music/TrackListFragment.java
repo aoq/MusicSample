@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class TrackListFragment extends TrackLoaderFragment {
@@ -56,6 +57,8 @@ public class TrackListFragment extends TrackLoaderFragment {
 
     private void setupViews(View rootView) {
         mTrackView = (ListView) rootView.findViewById(R.id.track_view);
+        ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.empty_view);
+        mTrackView.setEmptyView(progressBar);
         mTrackAdapter = new TrackAdapter(mContext, null);
         mTrackView.setAdapter(mTrackAdapter);
         mTrackView.setOnItemClickListener(new OnItemClickListener() {

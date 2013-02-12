@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class AlbumListFragment extends AlbumLoaderFragment {
@@ -56,6 +57,8 @@ public class AlbumListFragment extends AlbumLoaderFragment {
 
     private void setupViews(View rootView) {
         mAlbumView = (ListView) rootView.findViewById(R.id.album_view);
+        ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.empty_view);
+        mAlbumView.setEmptyView(progressBar);
         mAlbumAdapter = new AlbumAdapter(mContext, null);
         mAlbumView.setAdapter(mAlbumAdapter);
         mAlbumView.setOnItemClickListener(new OnItemClickListener() {

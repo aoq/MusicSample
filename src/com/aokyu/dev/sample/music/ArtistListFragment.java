@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ArtistListFragment extends ArtistLoaderFragment {
@@ -56,6 +57,8 @@ public class ArtistListFragment extends ArtistLoaderFragment {
 
     private void setupViews(View rootView) {
         mArtistView = (ListView) rootView.findViewById(R.id.artist_view);
+        ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.empty_view);
+        mArtistView.setEmptyView(progressBar);
         mArtistAdapter = new ArtistAdapter(mContext, null);
         mArtistView.setAdapter(mArtistAdapter);
         mArtistView.setOnItemClickListener(new OnItemClickListener() {
