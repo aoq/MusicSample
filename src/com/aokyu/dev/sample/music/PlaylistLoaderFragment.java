@@ -12,14 +12,12 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.MediaStore;
 
-public abstract class AlbumLoaderFragment extends Fragment {
+public abstract class PlaylistLoaderFragment extends Fragment {
 
     public final class ColumnIndex {
 
         public static final int ID = 0;
-        public static final int ALBUM = 1;
-        public static final int ARTIST = 2;
-        public static final int NUMBER_OF_SONGS = 3;
+        public static final int NAME = 1;
 
         private ColumnIndex() {}
     }
@@ -27,14 +25,14 @@ public abstract class AlbumLoaderFragment extends Fragment {
     protected Context mContext;
     private LoaderManager mLoaderManager;
 
-    private AlbumLoaderCallbacks mLoaderCallbacks;
+    private PlaylistLoaderCallbacks mLoaderCallbacks;
 
-    private static final int ID_ALBUM_LOADER = 0x00000003;
+    private static final int ID_PLAYLIST_LOADER = 0x00000004;
 
     protected abstract void onLoadFinished(Loader<Cursor> loader, Cursor cursor);
     protected abstract void onLoaderReset(Loader<Cursor> loader);
 
-    public AlbumLoaderFragment() {}
+    public PlaylistLoaderFragment() {}
 
     @Override
     public void onAttach(Activity activity) {
@@ -49,59 +47,57 @@ public abstract class AlbumLoaderFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mLoaderManager = getLoaderManager();
-        mLoaderCallbacks = new AlbumLoaderCallbacks(mContext, this);
+        mLoaderCallbacks = new PlaylistLoaderCallbacks(mContext, this);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        loadAlbums();
+        loadPlaylists();
     }
 
-    protected void loadAlbums() {
-        Loader<Cursor> loader = mLoaderManager.getLoader(ID_ALBUM_LOADER);
+    protected void loadPlaylists() {
+        Loader<Cursor> loader = mLoaderManager.getLoader(ID_PLAYLIST_LOADER);
 
         Bundle args = new Bundle();
         if (loader != null) {
-            mLoaderManager.restartLoader(ID_ALBUM_LOADER, args, mLoaderCallbacks);
+            mLoaderManager.restartLoader(ID_PLAYLIST_LOADER, args, mLoaderCallbacks);
         } else {
-            mLoaderManager.initLoader(ID_ALBUM_LOADER, args, mLoaderCallbacks);
+            mLoaderManager.initLoader(ID_PLAYLIST_LOADER, args, mLoaderCallbacks);
         }
     }
 
-    private static final class AlbumCursorLoader extends CursorLoader {
+    private static final class PlaylistCursorLoader extends CursorLoader {
 
         private static final String[] PROJECTION = new String[] {
-            MediaStore.Audio.Albums._ID,
-            MediaStore.Audio.Albums.ALBUM,
-            MediaStore.Audio.Albums.ARTIST,
-            MediaStore.Audio.Albums.NUMBER_OF_SONGS
+            MediaStore.Audio.Playlists._ID,
+            MediaStore.Audio.Playlists.NAME
         };
 
-        public AlbumCursorLoader(Context context) {
-            super(context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, PROJECTION, null, null, null);
+        public PlaylistCursorLoader(Context context) {
+            super(context, MediaStore.Audio.Playlists.EXTERNAL_CONTENT_URI, PROJECTION, null, null, null);
         }
     }
 
-    private static class AlbumLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static class PlaylistLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
 
         private WeakReference<Context> mContext;
-        private WeakReference<AlbumLoaderFragment> mFragment;
+        private WeakReference<PlaylistLoaderFragment> mFragment;
 
-        public AlbumLoaderCallbacks(Context context, AlbumLoaderFragment fragment) {
+        public PlaylistLoaderCallbacks(Context context, PlaylistLoaderFragment fragment) {
             mContext = new WeakReference<Context>(context);
-            mFragment = new WeakReference<AlbumLoaderFragment>(fragment);
+            mFragment = new WeakReference<PlaylistLoaderFragment>(fragment);
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            return new AlbumCursorLoader(mContext.get());
+            return new PlaylistCursorLoader(mContext.get());
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            AlbumLoaderFragment fragment = mFragment.get();
+            PlaylistLoaderFragment fragment = mFragment.get();
             if (fragment != null) {
                 fragment.onLoadFinished(loader, cursor);
             }
@@ -109,11 +105,10 @@ public abstract class AlbumLoaderFragment extends Fragment {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            AlbumLoaderFragment fragment = mFragment.get();
+            PlaylistLoaderFragment fragment = mFragment.get();
             if (fragment != null) {
                 fragment.onLoaderReset(loader);
             }
         }
-
     }
 }

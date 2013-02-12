@@ -4,8 +4,10 @@
     <string name="app_name">MusicSample</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="category_track">Track</string>
-    <string name="category_artist">Artist</string>
-    <string name="category_album">Album</string>
-    <string name="category_playlist">Playlist</string>
+    <string name="category_title">Category</string>
+
+    <string name="category_track">Tracks</string>
+    <string name="category_artist">Artists</string>
+    <string name="category_album">Albums</string>
+    <string name="category_playlist">Playlists</string>
 </resources>

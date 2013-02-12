@@ -14,21 +14,21 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class AlbumListFragment extends AlbumLoaderFragment {
+public class PlaylistListFragment extends PlaylistLoaderFragment {
 
-    /* package */ static final String TAG = AlbumListFragment.class.getSimpleName();
+    /* package */ static final String TAG = PlaylistListFragment.class.getSimpleName();
 
-    private ListView mAlbumView;
-    private AlbumAdapter mAlbumAdapter;
+    private ListView mPlaylistView;
+    private PlaylistAdapter mPlaylistAdapter;
 
-    private OnAlbumItemClickListener mListener;
+    private OnPlaylistItemClickListener mListener;
 
-    public AlbumListFragment() {
+    public PlaylistListFragment() {
         super();
     }
 
-    public static AlbumListFragment newInstance() {
-        AlbumListFragment fragment = new AlbumListFragment();
+    public static PlaylistListFragment newInstance() {
+        PlaylistListFragment fragment = new PlaylistListFragment();
         return fragment;
     }
 
@@ -36,8 +36,8 @@ public class AlbumListFragment extends AlbumLoaderFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (activity instanceof OnAlbumItemClickListener) {
-            mListener = (OnAlbumItemClickListener) activity;
+        if (activity instanceof OnPlaylistItemClickListener) {
+            mListener = (OnPlaylistItemClickListener) activity;
         }
     }
 
@@ -49,23 +49,24 @@ public class AlbumListFragment extends AlbumLoaderFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View contentView = inflater.inflate(R.layout.album_panel, null);
+        View contentView = inflater.inflate(R.layout.playlist_panel, null);
         setupViews(contentView);
         return contentView;
     }
 
     private void setupViews(View rootView) {
-        mAlbumView = (ListView) rootView.findViewById(R.id.album_view);
-        mAlbumAdapter = new AlbumAdapter(mContext, null);
-        mAlbumView.setAdapter(mAlbumAdapter);
-        mAlbumView.setOnItemClickListener(new OnItemClickListener() {
+        mPlaylistView = (ListView) rootView.findViewById(R.id.playlist_view);
+        mPlaylistAdapter = new PlaylistAdapter(mContext, null);
+        mPlaylistView.setAdapter(mPlaylistAdapter);
+        mPlaylistView.setOnItemClickListener(new OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if (mListener != null) {
-                    Cursor cursor = mAlbumAdapter.getCursor();
+                    Cursor cursor = mPlaylistAdapter.getCursor();
                     // Note that the cursor position have been changed via CursorAdapter#getItemId(int).
-                    String name = cursor.getString(ColumnIndex.ALBUM);
-                    mListener.onAlbumItemClick(id, name);
+                    String name = cursor.getString(ColumnIndex.NAME);
+                    mListener.onPlaylistItemClick(id, name);
                 }
             }
         });
@@ -73,8 +74,8 @@ public class AlbumListFragment extends AlbumLoaderFragment {
 
     @Override
     protected void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (mAlbumAdapter != null) {
-            Cursor oldCursor = mAlbumAdapter.swapCursor(cursor);
+        if (mPlaylistAdapter != null) {
+            Cursor oldCursor = mPlaylistAdapter.swapCursor(cursor);
             if (oldCursor != null) {
                 oldCursor.close();
             }
@@ -83,33 +84,31 @@ public class AlbumListFragment extends AlbumLoaderFragment {
 
     @Override
     protected void onLoaderReset(Loader<Cursor> loader) {
-        if (mAlbumAdapter != null) {
-            mAlbumAdapter.swapCursor(null);
+        if (mPlaylistAdapter != null) {
+            mPlaylistAdapter.swapCursor(null);
         }
     }
 
-    private static class AlbumAdapter extends CursorAdapter {
+    private static class PlaylistAdapter extends CursorAdapter {
 
         private LayoutInflater mInflater;
 
         private static final class ViewCache {
-            public final TextView titleView;
-            public final TextView artistView;
+            public final TextView nameView;
 
             public ViewCache(View root) {
-                titleView = (TextView) root.findViewById(R.id.title_view);
-                artistView = (TextView) root.findViewById(R.id.artist_view);
+                nameView = (TextView) root.findViewById(R.id.name_view);
             }
         }
 
-        public AlbumAdapter(Context context, Cursor c) {
+        public PlaylistAdapter(Context context, Cursor c) {
             super(context, c, false);
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            View view = mInflater.inflate(R.layout.album_list_item, null);
+            View view = mInflater.inflate(R.layout.playlist_list_item, null);
             view.setTag(new ViewCache(view));
             return view;
         }
@@ -118,15 +117,12 @@ public class AlbumListFragment extends AlbumLoaderFragment {
         public void bindView(View view, Context context, Cursor cursor) {
             ViewCache cache = (ViewCache) view.getTag();
 
-            String title = cursor.getString(ColumnIndex.ALBUM);
-            cache.titleView.setText(title);
-
-            String artist = cursor.getString(ColumnIndex.ARTIST);
-            cache.artistView.setText(artist);
+            String title = cursor.getString(ColumnIndex.NAME);
+            cache.nameView.setText(title);
         }
     }
 
-    public interface OnAlbumItemClickListener {
-        public void onAlbumItemClick(long albumId, String albumName);
+    public interface OnPlaylistItemClickListener {
+        public void onPlaylistItemClick(long playlistId, String playlistName);
     }
 }

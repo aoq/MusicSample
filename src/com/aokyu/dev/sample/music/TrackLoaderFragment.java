@@ -30,6 +30,7 @@ public abstract class TrackLoaderFragment extends Fragment {
     public final class Argument {
         public static final String ARTIST_ID = "arg_artist_id";
         public static final String ALBUM_ID = "arg_album_id";
+        public static final String PLAYLIST_ID = "arg_playlist_id";
     }
 
     protected static final long NO_ID = -2;
@@ -123,6 +124,11 @@ public abstract class TrackLoaderFragment extends Fragment {
             super(context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, PROJECTION,
                     selection, selectionArgs, sortOrder);
         }
+
+        public TrackCursorLoader(Context context, long playlistId) {
+            super(context, MediaStore.Audio.Playlists.Members.getContentUri("external", playlistId),
+                    PROJECTION, null, null, null);
+        }
     }
 
     private static class TrackLoaderCallbacks implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -154,6 +160,9 @@ public abstract class TrackLoaderFragment extends Fragment {
                 long albumId = args.getLong(Argument.ALBUM_ID);
                 builder.append(MediaStore.Audio.Media.ALBUM_ID + "=?");
                 argsList.add(String.valueOf(albumId));
+            } else if (args.containsKey(Argument.PLAYLIST_ID)) {
+                long playlistId = args.getLong(Argument.PLAYLIST_ID);
+                return new TrackCursorLoader(mContext.get(), playlistId);
             } else {
                 return new TrackCursorLoader(mContext.get());
             }

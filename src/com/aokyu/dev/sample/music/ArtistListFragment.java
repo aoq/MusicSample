@@ -63,7 +63,10 @@ public class ArtistListFragment extends ArtistLoaderFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if (mListener != null) {
-                    mListener.onArtistItemClick(id);
+                    Cursor cursor = mArtistAdapter.getCursor();
+                    // Note that the cursor position have been changed via CursorAdapter#getItemId(int).
+                    String name = cursor.getString(ColumnIndex.ARTIST);
+                    mListener.onArtistItemClick(id, name);
                 }
             }
         });
@@ -120,6 +123,6 @@ public class ArtistListFragment extends ArtistLoaderFragment {
     }
 
     public interface OnArtistItemClickListener {
-        public void onArtistItemClick(long artistId);
+        public void onArtistItemClick(long artistId, String artistName);
     }
 }
