@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 Yu AOKI
+ */
+
 package com.aokyu.dev.sample.music;
 
 import java.lang.ref.WeakReference;
